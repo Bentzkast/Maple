@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.489
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Entry", "Entry\Entry.vcxproj", "{DED2B72F-42FF-4F0C-98BB-0E36BE2DBDC6}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Maple", "Maple\Maple.vcxproj", "{86E4D245-A5DC-448C-B9AE-1F8B53A179F1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{86E4D245-A5DC-448C-B9AE-1F8B53A179F1}.Debug|x64.ActiveCfg = Debug|x64
+		{86E4D245-A5DC-448C-B9AE-1F8B53A179F1}.Debug|x64.Build.0 = Debug|x64
+		{86E4D245-A5DC-448C-B9AE-1F8B53A179F1}.Release|x64.ActiveCfg = Release|x64
+		{86E4D245-A5DC-448C-B9AE-1F8B53A179F1}.Release|x64.Build.0 = Release|x64
+		{DED2B72F-42FF-4F0C-98BB-0E36BE2DBDC6}.Debug|x64.ActiveCfg = Debug|x64
+		{DED2B72F-42FF-4F0C-98BB-0E36BE2DBDC6}.Debug|x64.Build.0 = Debug|x64
+		{DED2B72F-42FF-4F0C-98BB-0E36BE2DBDC6}.Release|x64.ActiveCfg = Release|x64
+		{DED2B72F-42FF-4F0C-98BB-0E36BE2DBDC6}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FAF45A52-FFED-4938-BCE3-55D882C04475}
+	EndGlobalSection
+EndGlobal
