@@ -77,6 +77,15 @@ int main(int argc, char** argv) {
 		if (keyboard_state[SDL_SCANCODE_RIGHT]) {
 			input_state.is_pressed[K_RIGHT] = true;
 		}
+		if (keyboard_state[SDL_SCANCODE_SPACE]) {
+			input_state.is_pressed[K_FIRE1] = true;
+		}
+		if (keyboard_state[SDL_SCANCODE_F]) {
+			input_state.is_pressed[K_FIRE2] = true;
+		}
+		if (keyboard_state[SDL_SCANCODE_I]) {
+			input_state.is_pressed[K_ITEM] = true;
+		}
 
 
 		while (!SDL_TICKS_PASSED(SDL_GetTicks(), ticks_count + 16));\
