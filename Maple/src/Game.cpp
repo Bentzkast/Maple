@@ -1,5 +1,8 @@
 #include "Game.h"
+#include "MainMenu.h"
+#include "Game_Internal.h"
 #include <stdio.h>
+#include <memory.h>
 
 // TODO WIN / LOSE(x) CONDITION....
 // TODO SIMPLE BOSSS
@@ -25,6 +28,7 @@ struct Enemy {
 	int hit_points;
 };
 
+internal Game_State active_game_state = GS_MAIN_MENU;
 
 const int PROJECTILE_CAP = 60;
 const int ENEMY_CAP = 60;
@@ -35,6 +39,8 @@ internal float right_kill_barrier = 2000;
 internal Player player = { 0 };
 internal Projectile projectiles_player_array[PROJECTILE_CAP] = { 0 };
 internal int active_projectile_player = 0;
+internal Vec2 player_world_offset = { 0 };
+
 
 internal Enemy enemies_array[ENEMY_CAP] = { 0 };
 internal Projectile projectiles_enemy_array[PROJECTILE_CAP] = { 0 };
@@ -44,18 +50,35 @@ internal float enemy_wave_spawn_timer = 0;
 internal float enemy_wave_spawn_rate = 0;
 internal int enemy_wave_count = 0;
 
-internal Enemy enemy_boss = { 0 };
-
-// TODO create a proper game state, temporary solution..
-internal bool is_game_over = false;
 
 void GameStart() {
+	// Init asset
+	MainMenuStart();
+	active_game_state = GS_MAIN_MENU;
+}
+
+void GamePlayStart()
+{
+	printf("Loading Game play....");
+	// Initialize game play...
 	player.pos = { 500,500 };
 	player.half_size = { 15,10 };
 	player.fire_rate = .257f;
 	player.hit_points = 5;
+	player_world_offset = { 0 };
 
+	memset(projectiles_player_array, 0, sizeof(projectiles_player_array[0]) * count(projectiles_player_array));
+	active_projectile_player = 0;
+	memset(enemies_array, 0, sizeof(enemies_array[0]) * count(enemies_array));
+	memset(projectiles_enemy_array, 0, sizeof(projectiles_enemy_array[0]) * count(projectiles_enemy_array));
+
+	active_projectile_enemies = 0;
+	spawned_enemy = 0;
+	enemy_wave_spawn_timer = 0;
 	enemy_wave_spawn_rate = 8.f;
+	enemy_wave_count = 0;
+
+
 
 	// Spawn A wave....
 	// TODO continuos spawning...
@@ -89,13 +112,26 @@ void EnemyBossCreate(int level) {
 	spawned_enemy++;
 }
 
-void GameSimulate(float delta_time) {
 
-	if (is_game_over) {
-		RendererDrawColorSet(200, 200, 200, 255);
-		RendererPixelRectDraw(10, 10, 1260, 700);
-		// temporary game over screen
-		return;
+
+Game_State GamePlaySimulate(float delta_time) {
+	player_world_offset.x += delta_time * .5f;
+	Vec2 screen_sector = { 0 };
+	RendererDrawColorSet(200, 200, 200, 255);
+	//UtilsSeedSet(1000);
+	for (screen_sector.y = 0; screen_sector.y < (720 / 20); screen_sector.y++)
+	{
+		for (screen_sector.x = 0; screen_sector.x < (1280 / 30); screen_sector.x++)
+		{
+			UtilsSeedSet((((uint32_t)(screen_sector.x) + (uint32_t)player_world_offset.x & 0xFFFF) << 16) | ((uint32_t)screen_sector.y + (uint32_t)player_world_offset.y & 0xFFFF));
+			float offset_x = player_world_offset.x - (uint32_t)player_world_offset.x;
+			if (UtilsRandInt(0, 20) == 1) {
+				RendererRectDraw(
+					Vec2{ ((screen_sector.x - (player_world_offset.x - (int)player_world_offset.x)) * 30.f),// - ,
+					screen_sector.y * 20.f },
+					{ 1, 1});
+			}
+		}
 	}
 
 
@@ -128,7 +164,7 @@ void GameSimulate(float delta_time) {
 		// FIRE routine...
 		projectiles_player_array[active_projectile_player].pos = player.pos;
 		projectiles_player_array[active_projectile_player].acc.x = 6000;
-		//projectiles_array[current_active_projectile_index].vel.x = 300;
+		projectiles_player_array[active_projectile_player].vel.x = 300;
 
 		active_projectile_player++;
 		player.timer = 0;
@@ -153,7 +189,8 @@ void GameSimulate(float delta_time) {
 			// FIRE routine
 			if (enemy->timer < enemy->fire_rate) { enemy->timer += delta_time; }
 			if (enemy->timer >= enemy->fire_rate) {
-				projectiles_enemy_array[active_projectile_enemies].acc.x = -2500;
+				projectiles_enemy_array[active_projectile_enemies].acc.x = -1500;
+				projectiles_enemy_array[active_projectile_enemies].vel.x = -100;
 				projectiles_enemy_array[active_projectile_enemies].pos = enemy->pos;
 				active_projectile_enemies++;
 				enemy->timer = 0;
@@ -232,10 +269,7 @@ void GameSimulate(float delta_time) {
 		}
 	}
 
-	// Check player dead
-	if (player.hit_points <= 0) {
-		is_game_over = true;
-	}
+
 
 	//TODO KILL & recycle enemy...
 	for (int i = 0; i < spawned_enemy; i++) {
@@ -267,4 +301,52 @@ void GameSimulate(float delta_time) {
 		EnemyBossCreate(0);
 		enemy_wave_count = 0;
 	}
+
+
+	// Check player dead
+	if (player.hit_points <= 0) {
+		return GS_MAIN_MENU;
+	}
+	return GS_GAMEPLAY;
+}
+void GameSimulate(float delta_time) {
+
+	Game_State next_game_state = active_game_state;
+	switch (active_game_state)
+	{
+	case GS_MAIN_MENU: {
+		next_game_state = MainMenuSimulate(delta_time);
+	} break;
+	case GS_GAMEPLAY: {
+		next_game_state = GamePlaySimulate(delta_time);
+	} break;
+	case GS_EXIT: {
+		WindowClose();
+	} break;
+	default:
+		// TODO better logging
+		printf("ERROR!!!! Invalid / unhandled Game state");
+		break;
+	}
+
+	if (active_game_state != next_game_state) {
+		switch (next_game_state)
+		{
+		case GS_MAIN_MENU: {
+			MainMenuStart();
+		} break;
+		case GS_GAMEPLAY: {
+			GamePlayStart();
+		} break;
+		case GS_EXIT: {
+			printf("Exiting next game");
+		} break;
+		default:
+			// TODO better logging
+			printf("ERROR!!!! Invalid / unhandled Game state");
+			break;
+		}
+	}
+
+	active_game_state = next_game_state;
 }

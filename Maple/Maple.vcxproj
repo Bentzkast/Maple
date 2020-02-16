@@ -13,14 +13,19 @@
   <ItemGroup>
     <ClCompile Include="src\Collision.cpp" />
     <ClCompile Include="src\Game.cpp" />
+    <ClCompile Include="src\MainMenu.cpp" />
     <ClCompile Include="src\Maple.cpp" />
+    <ClCompile Include="src\Maple_Asset.cpp" />
     <ClCompile Include="src\Maple_Input.cpp" />
     <ClCompile Include="src\Maple_Renderer.cpp" />
     <ClCompile Include="src\Maple_Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Game.h" />
+    <ClInclude Include="src\Game_Internal.h" />
+    <ClInclude Include="src\MainMenu.h" />
     <ClInclude Include="src\Maple.h" />
+    <ClInclude Include="src\Maple_Internal.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -57,14 +62,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)bin-int\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
-    <IncludePath>$(SolutionDir)External\SDL\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)External\SDL\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)External\SDL2_image\include;$(SolutionDir)External\SDL2_ttf\include;$(SolutionDir)External\SDL\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)External\SDL2_image\lib\x64;$(SolutionDir)External\SDL2_ttf\lib\x64;$(SolutionDir)External\SDL\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)bin-int\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
-    <IncludePath>$(SolutionDir)External\SDL\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)External\SDL\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)External\SDL2_image\include;$(SolutionDir)External\SDL2_ttf\include;$(SolutionDir)External\SDL\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)External\SDL2_image\lib\x64;$(SolutionDir)External\SDL2_ttf\lib\x64;$(SolutionDir)External\SDL\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -81,7 +86,7 @@
       </Command>
     </PostBuildEvent>
     <Link>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
@@ -100,7 +105,7 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>

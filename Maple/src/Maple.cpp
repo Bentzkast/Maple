@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <SDL.h>
+#include <SDL_image.h>
+#include <SDL_ttf.h>
 
 #include "Maple.h"
 #include "Game.h"
@@ -10,20 +12,31 @@ internal Uint32 ticks_count = 0;
 internal SDL_Window* window = NULL;
 internal SDL_Surface* screen_surface = NULL;
 
+internal Vec2 screen_size = { 0 };
+
 // Shared with the Renderer
 SDL_Renderer* sdl_renderer = NULL;
 // Shared with Inputs....
 Input_State input_state = { 0 };
 
-int main(int argc, char** argv) {
+Vec2 WindowGetScreenSize() {
+	return screen_size;
+}
 
+void WindowClose() {
+	// TODO clean up asset...
+	is_running = false;
+}
+
+int main(int argc, char** argv) {
+	screen_size = { 1280, 720 };
 
 	if (SDL_Init(SDL_INIT_EVERYTHING) < NULL) {
 		SDL_Log("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
 		return 1;
 	}
 
-	window = SDL_CreateWindow("Pong", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, SDL_WINDOW_OPENGL);
+	window = SDL_CreateWindow("Maple", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screen_size.x, screen_size.y, SDL_WINDOW_OPENGL);
 	if (window == NULL) {
 		// Create Window
 		SDL_Log("Could not create window: %s\n", SDL_GetError());
@@ -32,10 +45,19 @@ int main(int argc, char** argv) {
 
 	sdl_renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	if (sdl_renderer == NULL) {
-		SDL_Log("Could not create window: %s\n", SDL_GetError());
+		SDL_Log("Could not create renderer: %s\n", SDL_GetError());
 		return 1;
 	}
 
+	if (IMG_Init(IMG_INIT_PNG) == 0) {
+		SDL_Log("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
+		return 1;
+	}
+
+	if (TTF_Init() == -1) {
+		SDL_Log("SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
+		return 1;
+	}
 
 	GameStart();
 	ticks_count = SDL_GetTicks();
@@ -115,3 +137,4 @@ int main(int argc, char** argv) {
 
 	return 0;
 }
+

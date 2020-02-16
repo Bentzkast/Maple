@@ -23,13 +23,17 @@ Vec2 LerpVec(Vec2 v1, Vec2 v2, float value) {
 }
 
 uint32_t LehmerRandom() {
-	nLehmer += 0xe1206fc15;
+	nLehmer += 0xe120fc15;
 	uint64_t temp = (uint64_t)nLehmer * 0x4a39b70d;
 	uint32_t m1 = (temp >> 32) ^ temp;
 	temp = (uint64_t)m1 * 0x12fad5c9;
 	uint32_t m2 = (temp >> 32) ^ temp;
 
 	return m2;
+}
+
+void UtilsSeedSet(uint32_t seed){ 
+	nLehmer = seed;
 }
 
 int UtilsRandInt(int min, int max) {
